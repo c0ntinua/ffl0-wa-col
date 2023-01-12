@@ -4,7 +4,7 @@ mod state; use state::*;
 use std::env;    
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut default_settings: Vec<usize> =vec![50,100,7,5,20,3000];
+    let mut default_settings: Vec<usize> =vec![30,60,15,5,100,700,10000];
     for i in 0..default_settings.len() {
         if i < args.len() - 1 {
             let parsed = match args[i+1].parse::<usize>() {
@@ -22,6 +22,7 @@ fn main() {
     let span = default_settings[3] as i32;
     let flux = default_settings[4];
     let updates = default_settings[5];
+    let duration = default_settings[6];
     let right = 10;
     let down = 10;
     clear_screen();
@@ -30,9 +31,8 @@ fn main() {
     let mut red_state = random_state(rows, cols);
     let mut green_state = random_state(rows, cols);
     let mut blue_state = random_state(rows, cols);
-    cursor_to(down,right);
-    print!("fflo {} {} {} {} {} {}", rows, cols, filters, span, flux, updates);
-    loop {
+    
+    for i in 0..duration {
         for _ in 0..updates {
             let row =  rand::random::<usize>() % rows;
             let col =  rand::random::<usize>() % cols;
@@ -46,6 +46,9 @@ fn main() {
             }
         }
         display_color(&red_state,&green_state,&blue_state, rows, cols, down, right);
+        set_color(255,255,255);
+        cursor_to(down,right);
+        print!("fflo {} {} {} {} {} {} {}", rows, cols, filters, span, flux, updates, duration-i); 
         if rand::random::<usize>()%1000 < flux {
             let which = rand::random::<usize>()%filters;
             filter_system[which] = random_filter(span, span,0.4 + 2.8*rand::random::<f64>() );
